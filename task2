@@ -1,0 +1,16 @@
+import requests
+
+# Отправляем GET-запрос к API с параметром userId=1
+url = 'https://jsonplaceholder.typicode.com/posts'
+params = {'userId': 1}
+response = requests.get(url, params=params)
+
+# Проверяем статус-код ответа
+if response.status_code == 200:
+    # Распечатываем полученные записи
+    posts = response.json()
+    
+    for post in posts:
+        print(post)
+else:
+    print(f"Ошибка при запросе. Статус-код: {response.status_code}")
