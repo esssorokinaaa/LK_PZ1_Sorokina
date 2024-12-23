@@ -1,0 +1,68 @@
+import wikipedia
+from bs4 import BeautifulSoup
+import sys
+
+def main():
+    while True:
+        query = input("\nВведите ваш запрос: ")
+        
+        try:
+            page = wikipedia.page(query)
+        except wikipedia.exceptions.DisambiguationError as e:
+            print(f"Пожалуйста, уточните ваш запрос. Возможные варианты: {e.options}")
+            continue
+        except wikipedia.exceptions.PageError:
+            print("Страница не найдена. Попробуйте другой запрос.")
+            continue
+            
+        print(f"\nВы перешли на страницу: {page.title}\n")
+        
+        while True:
+            action = input("Что хотите сделать? \n1. Листать параграфы\n2. Перейти на одну из связанных страниц\n3. Выйти из программы\nВаш выбор: ")
+            
+            if action == "1":
+                paragraphs = page.content.split('\n')
+                
+                for i, paragraph in enumerate(paragraphs):
+                    print(f"{i+1}. {paragraph}")
+                    
+                break
+            elif action == "2":
+                links = page.links
+                print("\nСписок связанных страниц:")
+                
+                for i, link in enumerate(links):
+                    print(f"{i+1}. {link}")
+                
+                choice = int(input("\nНа какую страницу хотите перейти? Введите номер: "))
+                next_page_title = links[choice - 1]
+                
+                try:
+                    next_page = wikipedia.page(next_page_title)
+                except wikipedia.exceptions.DisambiguationError as e:
+                    print(f"Пожалуйста, уточните ваш запрос. Возможные варианты: {e.options}")
+                    continue
+                except wikipedia.exceptions.PageError:
+                    print("Страница не найдена. Попробуйте другой запрос.")
+                    continue
+                
+                print(f"\nВы перешли на страницу: {next_page.title}\n")
+                
+                sub_action = input("Что хотите сделать? \n1. Листать параграфы\n2. Вернуться назад\n3. Выйти из программы\nВаш выбор: ")
+                
+                if sub_action == "1":
+                    paragraphs = next_page.content.split('\n')
+                    
+                    for i, paragraph in enumerate(paragraphs):
+                        print(f"{i+1}. {paragraph}")
+                        
+                    break
+                elif sub_action == "2":
+                    continue
+                elif sub_action == "3":
+                    sys.exit(0)
+            elif action == "3":
+                sys.exit(0)
+
+if __name__ == "__main__":
+    main()
